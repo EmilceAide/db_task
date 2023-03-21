@@ -1,4 +1,5 @@
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder} from '@nestjs/swagger'
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -8,8 +9,19 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      }
     }),
   );
+  const config = new DocumentBuilder()
+    .setTitle('API')
+    .setDescription('Tasks List')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+  app.enableCors();
   await app.listen(3000);
 }
 bootstrap();
